@@ -3,18 +3,24 @@ package main
 import (
 	"log"
 	"net/http"
+
+	"github.com/jshaw/virtualcamera/internal/server"
 )
 
 func main() {
-	srv := &http.Server{Addr: ":8080", Handler: http.HandlerFunc(handle)}
+	srv := &http.Server{Addr: ":8080"}
+
+    s := server.Server{
+        ControlChannel: make(chan string),
+        DataChannel: make(chan *server.MessageEnvelope),
+
+    }
+    http.HandleFunc("/logs", s.HandleLogs)
+    http.HandleFunc("/send-stats", s.HandleSendStats)
+    http.HandleFunc("/control-channel", s.HandleControlChannel)
 
 	log.Printf("Listening https://0.0.0.0:8080")
-	log.Fatal(srv.ListenAndServeTLS("server.crt", "server.key"))
+	log.Fatal(srv.ListenAndServe())
 }
 
-func handle(w http.ResponseWriter, r *http.Request) {
-	// Log the request protocol
-	log.Printf("Got connection: %s", r.Proto)
-	// Send a message back to the client
-	w.Write([]byte("Hello"))
-}
+
