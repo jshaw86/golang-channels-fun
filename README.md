@@ -8,41 +8,38 @@ This program consists of a server (api) and a client (camera). Camera and API in
 6. By this time the client has reconnected to the `/control-channel` and waiting for another call to `/logs`
 
 NOTE: client timeout is set to 1 minute currently and will gracefully disconnect and reconnect to `/control-channel` if there's no activity on `/logs`
+
+# Quick Start
+1. Compile and run with docker compose
+```
+docker-compose up --build
+```
+
+2. Curl against logs endpoint on 8080
+```
+curl -v http://localhost:8080/logs 
+```
  
-# Compiling
-Without docker, from project root directory:
+# Running on host machine
+
+You may run it outside of docker by compiling the `camera` and the `api` on your host machine with `make`
+
+1. Run make from project root directory 
 ```
 make
 ```
-
-With docker compose, from project root directory:
-```
-docker-compose build
-```
-
-# Running
-
-Without docker, from project root directory:
-
-1. Open two terminals, tmux or screen sessions
-2. Run API in one terminal
+2. This will generate two binaries in project root directory `./api` and `./camera` 
+3. Open two terminals, tmux or screen sessions
+4. Run API in one terminal
 ```
 ./api
 ```
-3. Run Camera from the other
+5. Run Camera from the other
 ```
 ./camera
 ```
 
-With docker compose, from project root directory:
-```
-docker-compose up
-```
-
-Once the `api` is running in either `docker-compose` or `./api`, from project root directory:
-```
-curl -v http://localhost:8080/logs 
-```
+NOTE: you may also compile `api` and `camera` independently with `make camera` and `make api`
 
 # The Client
 

@@ -95,6 +95,10 @@ func (s *Server) HandleLogs(w http.ResponseWriter, r *http.Request) {
         }
     }
 
+    if msgs == nil {
+        msgs = make([]*messages.Message,0)
+    }
+
     responseBytes, err := messages.Serialize(msgs)
     if err != nil {
         log.Printf("[Handle Logs] \t Serialize error... %s", err)
