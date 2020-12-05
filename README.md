@@ -10,13 +10,19 @@ This program consists of a server (api) and a client (camera). Camera and API in
 NOTE: client timeout is set to 1 minute currently and will gracefully disconnect and reconnect to `/control-channel` if there's no activity on `/logs`
  
 # Compiling
-Without docker, from root:
+Without docker, from project root directory:
 ```
 make
 ```
 
+With docker compose, from project root directory:
+```
+docker-compose build
+```
+
 # Running
-Without docker, from root:
+
+Without docker, from project root directory:
 
 1. Open two terminals, tmux or screen sessions
 2. Run API in one terminal
@@ -26,6 +32,16 @@ Without docker, from root:
 3. Run Camera from the other
 ```
 ./camera
+```
+
+With docker compose, from project root directory:
+```
+docker-compose up
+```
+
+Once the `api` is running in either `docker-compose` or `./api`, from project root directory:
+```
+curl -v http://localhost:8080/logs 
 ```
 
 # The Client
@@ -55,6 +71,8 @@ Consists of 3 endpoints:
 1. `/logs`
 2. `/control-channel`
 3. `/send-stats`
+
+
 and two internal channels:
 1. `ControlChannel`
 2. `DataChannel`
