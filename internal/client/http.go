@@ -3,8 +3,8 @@ package client
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 
@@ -25,13 +25,18 @@ func handleResp(resp *http.Response, err error) ([]byte, error) {
     return body, nil
 }
 
+func (c *Client) generateUrl(uri string) string {
+    return fmt.Sprintf("%s://%s:%s/%s", c.scheme, c.host, c.port, uri)
+
+}
+
 func (c *Client) SendStats(ctx context.Context, msgs []*messages.Message) ([]byte, error) {
     body, err := messages.Serialize(msgs)
     if err != nil {
         return nil, err
     }
 
-    req, err := http.NewRequest("POST", "http://localhost:8080/send-stats", bytes.NewReader(body))
+    req, err := http.NewRequest("POST", c.generateUrl("send-stats"), bytes.NewReader(body))
     if err != nil {
        return nil, err
 	}
@@ -44,23 +49,28 @@ func (c *Client) SendStats(ctx context.Context, msgs []*messages.Message) ([]byt
 }
 
 func (c *Client) Connect(ctx context.Context) ([]byte, error) {
-    req, err := http.NewRequest("GET", "http://localhost:8080/control-channel", nil)
+    req, err := http.NewRequest("GET", c.generateUrl("control-channel"), nil)
     if err != nil {
         return nil, err
 	}
     req = req.WithContext(ctx)
 	httpResp, httpErr := c.transport.Do(req)
     resp, err := handleResp(httpResp, httpErr)
-    log.Printf("Connect resp/err... %s/%s", resp, err)
 
     return resp, err
 
 }
 
-func New() (*Client, error) {
+func New(scheme string, host string, port string) (*Client, error) {
 	client := &http.Client{
 	    Timeout: 60 * time.Second,
 	}
 
-    return &Client{client}, nil
+    return &Client{
+        transport: client,
+        host: host,
+        port: port,
+        scheme: scheme,
+
+    }, nil
 }

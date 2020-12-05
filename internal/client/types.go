@@ -4,6 +4,9 @@ import "net/http"
 
 type Client struct {
     transport *http.Client
+    host string
+    port string
+    scheme string
 }
 
 
