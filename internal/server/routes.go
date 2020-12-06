@@ -25,8 +25,8 @@ func (s *Server) HandleControlChannel(w http.ResponseWriter, r *http.Request) {
     case <-r.Context().Done():
         log.Printf("[Handle Channel] \t Client went away")
         return
-    case command := <-s.ControlChannel:
-        if command == "send-stats" {
+    case controlMsg := <-s.ControlChannel:
+        if controlMsg.Command == "send-stats" {
             // Log the request protocol
             log.Printf("[Handle Channel] \t Cleared wait... %s", r.Proto)
             // Send a message back to the client
@@ -70,7 +70,7 @@ func (s *Server) HandleSendStats(w http.ResponseWriter, r *http.Request) {
 func (s *Server) HandleLogs(w http.ResponseWriter, r *http.Request) {
     log.Printf("[Handle Logs] \t Publish to control channel... ")
     select {
-    case s.ControlChannel <- "send-stats":
+    case s.ControlChannel <- &ControlMessage{"send-stats"}:
         break
     case <-time.After(5 * time.Second):
         w.WriteHeader(http.StatusRequestTimeout)

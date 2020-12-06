@@ -11,7 +11,7 @@ func main() {
 	srv := &http.Server{Addr: ":8080"}
 
     s := server.Server{
-        ControlChannel: make(chan string),
+        ControlChannel: make(chan *server.ControlMessage),
         DataChannel: make(chan *server.MessageEnvelope),
 
     }
